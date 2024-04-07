@@ -5,7 +5,6 @@ from fastapi import APIRouter, Body
 from app.core import convert_arabic_to_roman, convert_roman_to_arabic
 from app.models import ConverterResponse
 
-
 router = APIRouter(tags=["Стажировка"])
 
 """
@@ -15,8 +14,21 @@ router = APIRouter(tags=["Стажировка"])
     от 1 до 3999, то возвращать "не поддерживается"
     3. Запустить приложение и проверить результат через swagger
 """
+
+
 @router.post("/converter", description="Задание_2. Конвертер")
 async def convert_number(number: Annotated[int | str, Body()]) -> ConverterResponse:
+    if type(number) is int and 0 < number < 4000:
+        roman = convert_arabic_to_roman(number)
+        arabic = number
+    elif type(number) is str:
+        roman = number
+        arabic = convert_roman_to_arabic(number.upper())
+    else:
+        raise Exception("не поддерживается")
+
+    converter_response = ConverterResponse(arabic=arabic, roman=roman)
+
     """
     Принимает арабское или римское число.
     Конвертирует его в римское или арабское соответственно.
@@ -26,7 +38,5 @@ async def convert_number(number: Annotated[int | str, Body()]) -> ConverterRespo
         "roman": "X"
     }
     """
-
-    converter_response = ConverterResponse()
 
     return converter_response

@@ -35,6 +35,7 @@ router = APIRouter(tags=["Стажировка"])
 """
 @router.post("/check_json", description="Задание_3. Валидация json")
 async def check_json(body: BigJson) -> BigJson:
-    """ """
+
+
 
     return body

@@ -37,7 +37,6 @@ router = APIRouter(tags=["Стажировка"])
 """
 @router.post("/get_average_age_by_position", description="Задание_4. Работа с pandas и csv")
 async def get_average_age_by_position(file):
-    """"""
 
     result = average_age_by_position(file)
 
