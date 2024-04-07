@@ -2,7 +2,6 @@ from fastapi import APIRouter
 
 from app.core import average_age_by_position
 
-
 router = APIRouter(tags=["Стажировка"])
 
 """
@@ -35,9 +34,9 @@ router = APIRouter(tags=["Стажировка"])
 неправильный формат файла, названия столбцов отличаются и т.д. 
 В таких случаях ожидается строка с ошибкой и status code 400.
 """
+
+
 @router.post("/get_average_age_by_position", description="Задание_4. Работа с pandas и csv")
-async def get_average_age_by_position(file):
-
+async def get_average_age_by_position(file: str) -> dict[str, float]:
     result = average_age_by_position(file)
-
     return result

@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from io import StringIO
 import pandas as pd
+import requests
+from fastapi import HTTPException
 
 
 def convert_arabic_to_roman(number: int) -> str:
@@ -38,12 +40,17 @@ def convert_roman_to_arabic(number: str) -> int:
 
 
 def average_age_by_position(file):
-    pdFile = pd.read_csv(file, delimiter=',')
-    age = set(pdFile.groupby('Должность')['Возраст'].transform('mean'))
-    pos = set(pdFile['Должность'])
-    return dict(zip(pos, age))
+    try:
+        pdFile = pd.read_csv(file, delimiter=',')
 
+        requiredColumns = ["Имя", "Возраст", "Должность"]
+        if not set(requiredColumns).issubset(pdFile.columns):
+            raise ValueError("Неверный формат файла. Отсутствуют необходимые колонки.")
 
+        posAndAvg = pdFile.groupby("Должность")["Возраст"].mean().to_dict()
+        return posAndAvg
+    except Exception:
+        raise HTTPException(status_code=400, detail="Файл не найден")
 
 
 """
