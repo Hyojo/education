@@ -150,8 +150,6 @@ class DataGenerator:
         :param writer: Одна из реализаций классов потомков от BaseWriter
         """
         """Ваша реализация"""
-
-        print(path)
         with open(path, 'w') as buffer:
             writer.seek(0)
             shutil.copyfileobj(writer, buffer)

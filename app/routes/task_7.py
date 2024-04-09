@@ -1,10 +1,10 @@
-import logging
 import time
 from contextvars import ContextVar
-from app.logging_сonfig import output_log
 
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
+
+from app.logging_сonfig import output_log
 
 client_host: ContextVar[str | None] = ContextVar("client_host", default=None)
 
@@ -15,7 +15,7 @@ class CustomMiddleware(BaseHTTPMiddleware):
 
         start_time = time.time()  # Засекаем время начала выполнения запроса
         client_host.set(request.client.host)
-        output_log.info(f"Accepted request {request.method} {request.url}")
+        # output_log.info(f"Accepted request {request.method} {request.url}")
 
         response = await call_next(request)
 

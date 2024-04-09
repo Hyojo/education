@@ -45,7 +45,6 @@ async def generate_file(file_type: Annotated[str, Body()], matrix_size: Annotate
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Неверный размер матрицы")
 
     path = f'app/archives/{datetime.today().strftime("%d_%m_Y")}'
-    print(path)
 
     data = DataGenerator()
     data.generate(matrix_size)
