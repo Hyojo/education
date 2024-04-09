@@ -17,14 +17,16 @@ b.	Добавить архивирование к post запросу, то ес
 с*.Добавить аннотации типов.
 """
 
-fakeBd = dict()
-iD = 0
+#fakeBd = dict()
+#iD = 0
 
 
 @router.post("/upload_file", description="Задание_5. API для хранения файлов")
 async def upload_file(file):
     """Описание."""
-    global iD, fakeBd
+    #global iD, fakeBd
+
+    file = open()
 
     iD += 1
     destination_dir = ''
@@ -32,7 +34,7 @@ async def upload_file(file):
     # Путь для архива
     zipFilePath = os.path.join(destination_dir, os.path.basename(file).split('.')[0] + '.zip')
     # Создаем архив
-    with ZipFile(zipFilePath, 'a') as zipf:
+    with ZipFile(r'archives/' + zipFilePath, 'a') as zipf:
         zipf.write(file, arcname=fileName)
     p = str(Path(zipFilePath).resolve())
     createFile = [zipFilePath, p]

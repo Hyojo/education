@@ -1,6 +1,9 @@
-from fastapi import APIRouter
+from datetime import datetime
+from typing import Annotated
 
-from app.core import DataGenerator
+from fastapi import APIRouter, Body, HTTPException, status
+
+from app.core import DataGenerator, JSONWriter, CSVWriter, YAMLWriter
 
 router = APIRouter(tags=["API для хранения файлов"])
 
@@ -21,13 +24,43 @@ API должно принимать json, по типу:
 
 (Подумать, как переисползовать код из задания 5)
 """
+
+
+# @router.post("/generate_file", description="Задание_6. Конвертер")
+# # async def generate_file() -> int:
+# #     """Описание."""
+# #
+# #     data = DataGenerator()
+# #     data.generate()
+# #     data.to_file(path, file_type)
+# #     file_id: int = data.file_id
+# #
+# #     return file_id
+
 @router.post("/generate_file", description="Задание_6. Конвертер")
-async def generate_file() -> int:
+async def generate_file(file_type: Annotated[str, Body()], matrix_size: Annotated[int, Body()]) -> int:
     """Описание."""
 
-    data = DataGenerator()
-    data.generate()
-    data.to_file()
-    file_id: int = data.file_id
+    if not 4 <= matrix_size < 15:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Неверный размер матрицы")
 
+    path = f'app/archives/{datetime.today().strftime("%d_%m_Y")}'
+    print(path)
+
+    data = DataGenerator()
+    data.generate(matrix_size)
+    match file_type.lower():
+        case "json":
+            json_writer = JSONWriter()
+            data.to_file(path + '.json', json_writer.write(data.data))
+        case "csv":
+            csv_writer = CSVWriter()
+            data.to_file(path + '.csv', csv_writer.write(data.data))
+        case "yaml":
+            yaml_writer = YAMLWriter()
+            data.to_file(path + '.yaml', yaml_writer.write(data.data))
+        case _:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Укажите формат json, csv или yaml")
+
+    file_id: int = data.file_id
     return file_id

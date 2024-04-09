@@ -1,6 +1,11 @@
 from fastapi import FastAPI
 
+from app.routes.task_7 import CustomMiddleware
+
 app = FastAPI()
+
+
+
 
 from app.routes.task_1 import router as r_1
 app.include_router(r_1)
@@ -19,3 +24,5 @@ app.include_router(r_5)
 
 from app.routes.task_6 import router as r_6
 app.include_router(r_6)
+
+app.add_middleware(CustomMiddleware)

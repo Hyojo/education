@@ -1,7 +1,12 @@
+import csv
+import json
+import random
+import shutil
 from abc import ABC, abstractmethod
 from io import StringIO
+
 import pandas as pd
-import requests
+import yaml
 from fastapi import HTTPException
 
 
@@ -53,6 +58,11 @@ def average_age_by_position(file):
         raise HTTPException(status_code=400, detail="Файл не найден")
 
 
+def writeToFile(path, data):
+    with open(path, 'a') as toFile:
+        toFile.write(json.dumps(data))
+
+
 """
 Задание_6.
 Дан класс DataGenerator, который имеет два метода: generate(), to_file()
@@ -75,6 +85,7 @@ class BaseWriter(ABC):
         :param data: полученные данные
         :return: Объект StringIO с данными из data
         """
+        # return StringIO('\n'.join('\t'.join(map(str, row)) for row in data))
         pass
 
 
@@ -83,23 +94,36 @@ class JSONWriter(BaseWriter):
 
     """Ваша реализация"""
 
-    pass
+    def write(self, data: list[list[int, str, float]]) -> StringIO:
+        output = StringIO()
+        json.dump(data, output)
+        output.seek(0)
+        return output
 
 
-class CSVWriter:
+class CSVWriter(BaseWriter):
     """Потомок BaseWriter с переопределением метода write для генерации файла в csv формате"""
 
     """Ваша реализация"""
 
-    pass
+    def write(self, data: list[list[int, str, float]]) -> StringIO:
+        output = StringIO()
+        writer = csv.writer(output)
+        writer.writerows(data)
+        output.seek(0)
+        return output
 
 
-class YAMLWriter:
+class YAMLWriter(BaseWriter):
     """Потомок BaseWriter с переопределением метода write для генерации файла в yaml формате"""
 
     """Ваша реализация"""
 
-    pass
+    def write(self, data: list[list[int, str, float]]) -> StringIO:
+        output = StringIO()
+        yaml.dump(data, output)
+        output.seek(0)
+        return output
 
 
 class DataGenerator:
@@ -111,7 +135,10 @@ class DataGenerator:
         """Генерирует матрицу данных заданного размера."""
 
         data: list[list[int, str, float]] = []
+
         """Ваша реализация"""
+        for i in range(matrix_size):
+            data.append((random.randint(0, 9), "A:" + str(random.randint(0, 9)), random.randint(0, 9) + 0.5))
 
         self.data = data
 
@@ -122,7 +149,10 @@ class DataGenerator:
         :param path: Путь куда требуется сохранить файл
         :param writer: Одна из реализаций классов потомков от BaseWriter
         """
-
         """Ваша реализация"""
 
-        pass
+        print(path)
+        with open(path, 'w') as buffer:
+            writer.seek(0)
+            shutil.copyfileobj(writer, buffer)
+        self.file_id = id(writer)

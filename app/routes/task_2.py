@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, HTTPException, status
 
 from app.core import convert_arabic_to_roman, convert_roman_to_arabic
 from app.models import ConverterResponse
@@ -25,11 +25,12 @@ async def convert_number(number: Annotated[int | str, Body()]) -> ConverterRespo
         roman = number
         arabic = convert_roman_to_arabic(number.upper())
     else:
-        raise Exception("не поддерживается")
-
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Неверный тип данных, нужен int или str")
     converter_response = ConverterResponse(arabic=arabic, roman=roman)
 
-    """
+    return converter_response
+
+"""
     Принимает арабское или римское число.
     Конвертирует его в римское или арабское соответственно.
     Возвращает первоначальное и полученное числа в виде json:
@@ -37,6 +38,4 @@ async def convert_number(number: Annotated[int | str, Body()]) -> ConverterRespo
         "arabic": 10,
         "roman": "X"
     }
-    """
-
-    return converter_response
+"""
