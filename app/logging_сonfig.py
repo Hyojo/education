@@ -11,7 +11,7 @@ formatter = logging.Formatter('[%(asctime)s] {%(filename)s:%(lineno)d} %(levelna
                               'http_method)s | %(url)s | %(status_code)s |')
 
 # Создаем обработчик для записи в файл
-file_handler = logging.FileHandler('loggs/output.log')
+file_handler = logging.FileHandler('app/loggs/output.log')
 file_handler.setLevel(logging.INFO)
 file_handler.setFormatter(formatter)
 

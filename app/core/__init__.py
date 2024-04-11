@@ -56,6 +56,7 @@ def average_age_by_position(file):
         return posAndAvg
     except Exception:
         raise HTTPException(status_code=400, detail="Файл не найден")
+    pass
 
 
 def writeToFile(path, data):
